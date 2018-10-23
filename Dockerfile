@@ -10,7 +10,8 @@ ARG SSH_KNOWN_HOSTS
 RUN echo "$SSH_KNOWN_HOSTS" > /root/.ssh/known_hosts
 RUN chmod 400 /root/.ssh/id_rsa
 
-git clone git@github.com:levavakian/aragno.git
+WORKDIR /
+RUN git clone git@github.com:levavakian/aragno.git
 
 FROM golang:latest
 
