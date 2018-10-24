@@ -1,0 +1,27 @@
+{
+  "name": "ui",
+  "version": "1.0.0",
+  "description": "The UI for the Spidey Aragno",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/levavakian/aragno.git"
+  },
+  "keywords": [
+    "game",
+    "pixi.js",
+    "npm"
+  ],
+  "author": "Carl Saldanha, Niharika Arora & Levon Avagyan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/levavakian/aragno/issues"
+  },
+  "homepage": "https://github.com/levavakian/aragno#readme",
+  "dependencies": {
+    "pixi.js": "^4.8.2"
+  }
+}
