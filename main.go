@@ -44,13 +44,13 @@ type CollectedInputs struct {
     mux       sync.Mutex
 }
 
-func (collected CollectedInputs) Add(input PlayerInput) {
+func (collected *CollectedInputs) Add(input PlayerInput) {
     collected.mux.Lock()
     defer collected.mux.Unlock()
     collected.Inputs[input.conn] = input
 }
 
-func (collected CollectedInputs) Pop() map[*websocket.Conn]PlayerInput {
+func (collected *CollectedInputs) Pop() map[*websocket.Conn]PlayerInput {
     collected.mux.Lock()
     defer collected.mux.Unlock()
 
