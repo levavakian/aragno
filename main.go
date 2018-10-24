@@ -4,6 +4,7 @@ import (
     "time"
     "net/http"
     "fmt"
+    "sync"
     "github.com/gorilla/websocket"
 )
 
@@ -35,6 +36,27 @@ type LegState struct {
 type StateOutput struct {
     Body BodyState  `json:"body"`
     Legs []LegState `json:"legs"`
+}
+
+type CollectedInputs struct {
+    InputChan chan PlayerInput
+    Inputs    map[*websocket.Conn]PlayerInput
+    mux       sync.Mutex
+}
+
+func (collected CollectedInputs) Add(input PlayerInput) {
+    collected.mux.Lock()
+    defer collected.mux.Unlock()
+    collected.Inputs[input.conn] = input
+}
+
+func (collected CollectedInputs) Pop() map[*websocket.Conn]PlayerInput {
+    collected.mux.Lock()
+    defer collected.mux.Unlock()
+
+    inputs := collected.Inputs
+    collected.Inputs = make(map[*websocket.Conn]PlayerInput)
+    return inputs
 }
 
 func connect(inputChan chan PlayerInput) func(http.ResponseWriter,*http.Request) {
