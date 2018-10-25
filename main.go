@@ -11,12 +11,12 @@ import (
 var upgrader = websocket.Upgrader{}
 
 type PlayerInput struct {
-    x            float32
-    y            float32
-    clicked      bool
-    disconnected bool
-    conn         *websocket.Conn
-    outputChan   chan StateOutput
+    X            float32
+    Y            float32
+    Clicked      bool
+    Disconnected bool
+    Conn         *websocket.Conn
+    OutputChan   chan StateOutput
 }
 
 type BodyState struct {
@@ -34,52 +34,119 @@ type LegState struct {
 }
 
 type StateOutput struct {
-    Body BodyState  `json:"body"`
-    Legs []LegState `json:"legs"`
+    Body      BodyState  `json:"body"`
+    Legs      []LegState `json:"legs"`
+    PlayerIdx int        `json:"player_idx"`
 }
 
 type CollectedInputs struct {
     InputChan chan PlayerInput
     Inputs    map[*websocket.Conn]PlayerInput
+    CloseSig  chan struct{}
     mux       sync.Mutex
 }
 
-func (collected *CollectedInputs) Add(input PlayerInput) {
-    collected.mux.Lock()
-    defer collected.mux.Unlock()
-    collected.Inputs[input.conn] = input
+func (collector *CollectedInputs) Add(input PlayerInput) {
+    collector.mux.Lock()
+    defer collector.mux.Unlock()
+    collector.Inputs[input.Conn] = input
 }
 
-func (collected *CollectedInputs) Pop() map[*websocket.Conn]PlayerInput {
-    collected.mux.Lock()
-    defer collected.mux.Unlock()
+func (collector *CollectedInputs) Pop() map[*websocket.Conn]PlayerInput {
+    collector.mux.Lock()
+    defer collector.mux.Unlock()
 
-    inputs := collected.Inputs
-    collected.Inputs = make(map[*websocket.Conn]PlayerInput)
+    inputs := collector.Inputs
+    collector.Inputs = make(map[*websocket.Conn]PlayerInput)
     return inputs
+}
+
+func (collecter *CollectedInputs) Collect() {
+    for {
+        select {
+        case input := <- collecter.InputChan:
+            collecter.Add(input)
+        case _, ok := <- collecter.CloseSig:
+            if !ok {
+                fmt.Println("Shutting down input collecter")
+                break;
+            }
+        default:
+            // Do nothing
+        }
+    }
+}
+
+type OutputDispatch struct {
+    OutputChans map[*websocket.Conn]chan StateOutput
+}
+
+func (dispatch *OutputDispatch) ConsumeInputs(inputs map[*websocket.Conn]PlayerInput) {
+    for inConn, inInput := range inputs {
+        fmt.Printf("Consuming input from %s\n", &inConn)
+
+        _, exists := dispatch.OutputChans[inConn]
+        
+        if !exists {
+            dispatch.OutputChans[inConn] = inInput.OutputChan
+        }
+
+        if inInput.Disconnected {
+            close(dispatch.OutputChans[inConn])
+            delete(dispatch.OutputChans, inConn)
+        }
+    }
+}
+
+func (dispatch *OutputDispatch) Dispatch(state StateOutput) {
+    for _, outChan := range dispatch.OutputChans {
+        outChan <- state
+    }
+}
+
+func gameLoop(collector *CollectedInputs) {
+    fmt.Println("Starting game loop")
+
+    // Set up output dispatcher
+    outputDispatch := OutputDispatch{OutputChans: make(map[*websocket.Conn]chan StateOutput)}
+
+    // Game loop
+    for {
+        // Collect and consume inputs
+        collectedInputs := collector.Pop()
+        outputDispatch.ConsumeInputs(collectedInputs)
+
+        // Do game stuff
+        state := StateOutput{Body: BodyState{X: 1, Y: 1, Theta: 1}, Legs: []LegState{LegState{X: 2, Y: 2, Theta: 2}, LegState{X: 3, Y: 3, Theta: 3}}}
+
+        // Output game state to websockets
+        outputDispatch.Dispatch(state)
+
+        // Server run rate at ~30Hz
+        time.Sleep(time.Millisecond * 33)
+    }
 }
 
 func connect(inputChan chan PlayerInput) func(http.ResponseWriter,*http.Request) {
     return func(writer http.ResponseWriter, req *http.Request) {
-        fmt.Println("hit connect")
         connection, err := upgrader.Upgrade(writer, req, nil)
         if err != nil {
-            fmt.Printf("connection failed: %s\n", err)
+            fmt.Printf("Connection failed: %s\n", err)
             return
         }
-        fmt.Println("no connect error")
+
         outputChan := make(chan StateOutput)
         go func() {
-            fmt.Println("starting reader routine")
-            initInput := PlayerInput{x: 0, y: 0, clicked: false, disconnected: false,
-                                     conn: connection, outputChan: outputChan}
+            fmt.Printf("Starting reader for %s", &connection)
+            initInput := PlayerInput{X: 0, Y: 0, Clicked: false, Disconnected: false,
+                                     Conn: connection, OutputChan: outputChan}
             inputChan <- initInput
 
             for {
                 _, message, err := connection.ReadMessage()
                 if err != nil {
-                    fmt.Println("read connection terminated")
-                    disconnectInput := PlayerInput{conn: connection, disconnected: true}
+                    fmt.Printf("Read connection closed for %s", &connection)
+                    disconnectInput := PlayerInput{Conn: connection, Disconnected: true}
                     connection.Close()
                     inputChan <- disconnectInput
                     break
@@ -89,18 +156,18 @@ func connect(inputChan chan PlayerInput) func(http.ResponseWriter,*http.Request)
         }()
 
         go func() {
-            fmt.Println("starting writer routine")
+            fmt.Printf("Starting writer for %s", &connection)
             for {
                 output, ok := (<- outputChan)
 
                 if !ok {
-                    fmt.Println("game loop closed write connection")
+                    fmt.Printf("Close requested for %s\n", &connection)
                     break
                 }
 
                 err := connection.WriteJSON(output)
                 if err != nil {
-                    fmt.Printf("write connection terminated: %s\n", err)
+                    fmt.Printf("Write connection failed with %s for %s\n", err, &connection)
                     connection.Close()
                 }
             }
@@ -108,44 +175,13 @@ func connect(inputChan chan PlayerInput) func(http.ResponseWriter,*http.Request)
     }
 }
 
-func gameLoop(inputChan chan PlayerInput) {
-    connMap := make(map[*websocket.Conn]chan StateOutput)
-    fmt.Println("Starting game loop")
-    for {
-        chanLen := len(inputChan)
-        if chanLen == 0 {
-            chanLen = 1
-        }
-
-        for i := 0; i < chanLen; i++ {
-            select {
-            case input := <- inputChan:
-                fmt.Println("Got some input")
-                if _, exists := connMap[input.conn]; !exists {
-                    fmt.Println("new connection!")
-                    connMap[input.conn] = input.outputChan
-                }
-                if input.disconnected {
-                    close(connMap[input.conn])
-                    delete(connMap, input.conn)
-                }
-            default:
-                break
-            }
-        }
-
-        for _, outChan := range connMap {
-            outChan <- StateOutput{Body: BodyState{X: 1, Y: 1, Theta: 1}, Legs: []LegState{LegState{X: 2, Y: 2, Theta: 2}, LegState{X: 3, Y: 3, Theta: 3}}}
-        }
-        time.Sleep(time.Millisecond * 30)
-    }
-}
-
 func main() {
-    inputChan := make(chan PlayerInput)
-    go gameLoop(inputChan)
+    // Set up collecter to grab outputs
+    collector := &CollectedInputs{InputChan: make(chan PlayerInput), Inputs: make(map[*websocket.Conn]PlayerInput), CloseSig: make(chan struct{})}
+    go collector.Collect()
 
-    fmt.Println("Whaddup")
-    http.HandleFunc("/connect", connect(inputChan))
+    go gameLoop(collector)
+
+    http.HandleFunc("/connect", connect(collector.InputChan))
     fmt.Println(http.ListenAndServe("localhost:8000", nil))
 }
