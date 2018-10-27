@@ -7,12 +7,12 @@ import (
 
 // Aether centralized storage for all components
 type Aether struct {
-	Maps map[interface{}]map[EntityId]interface{}
+	Maps map[reflect.Type]map[EntityId]interface{}
 }
 
 // NewAether creates a new aether
 func NewAether() *Aether {
-	return &Aether{Maps: make(map[interface{}]map[EntityId]interface{})}
+	return &Aether{Maps: make(map[reflect.Type]map[EntityId]interface{})}
 }
 
 // Register adds a component to the aether registry
@@ -34,6 +34,9 @@ func (ae *Aether) Register(id EntityId, cp interface{}) error {
 // Retrieve retrieves a component based on type and entity id
 func (ae *Aether) Retrieve(id EntityId, cpType reflect.Type) (interface{}, error) {
 	if _, exists := ae.Maps[cpType]; !exists {
+		if cpType.Kind() != reflect.Ptr {
+			return nil, errors.New("Aether.Retrieve: not a pointer type")
+		}
 		return nil, errors.New("Aether.Retrieve: type not found")
 	}
 
@@ -46,7 +49,10 @@ func (ae *Aether) Retrieve(id EntityId, cpType reflect.Type) (interface{}, error
 
 func (ae *Aether) RetrieveType(cpType reflect.Type) (map[EntityId]interface{}, error) {
 	if _, exists := ae.Maps[cpType]; !exists {
-		return nil, errors.New("Aether.RetrieveType: type not found")
+		if cpType.Kind() != reflect.Ptr {
+			return nil, errors.New("Aether.Retrieve: not a pointer type")
+		}
+		ae.Maps[cpType] = make(map[EntityId]interface{})
 	}
 
 	return ae.Maps[cpType], nil

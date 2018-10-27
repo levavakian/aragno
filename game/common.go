@@ -28,7 +28,18 @@ type GameObjectType struct {
 	Type string
 }
 
-// Owner the owning connection for this entity
-type Owner struct {
-	Conn *websocket.Conn
+// Player the owning connection and input for this entity
+type PlayerInput struct {
+	X            float32
+	Y            float32
+	Valid        bool
+	Clicked      bool
+	Disconnected bool
+	OutputChan   chan GameState
+	Conn         *websocket.Conn
+}
+
+// StateOutput the state of the game sent to the clients
+type GameState struct {
+	message string
 }
