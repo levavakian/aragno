@@ -1,7 +1,7 @@
-FROM golang:latest as src_download
+ARG SOURCE_STAGE=git
 
+FROM golang:latest as src_git
 ARG GIT_RANDOMIZER
-
 # Authorize ssh private key
 RUN mkdir -p /root/.ssh/
 ARG SSH_PRIVATE_KEY
@@ -13,10 +13,18 @@ RUN chmod 400 /root/.ssh/id_rsa
 WORKDIR /
 RUN git clone git@github.com:levavakian/aragno.git
 
+FROM golang:latest as src_local
+COPY . /aragno
+
+FROM src_$SOURCE_STAGE AS stageforcopy
+
 FROM golang:latest
 
-COPY --from=src_download /aragno /go/src/aragno
-RUN curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+COPY --from=stageforcopy /aragno /go/src/aragno
+RUN go get -u github.com/golang/dep/cmd/dep
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN DEBIAN_FRONTEND=noninteractive  apt-get update -y && apt-get install npm build-essential -y
 
 WORKDIR /go/src/aragno
+RUN cd ui && npm install
 RUN dep ensure
