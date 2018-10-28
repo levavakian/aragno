@@ -1,11 +1,11 @@
 package game
 
 import (
-	"sync"
-	"github.com/gorilla/websocket"
 	"aragno/ecs"
-	"reflect"
 	"fmt"
+	"github.com/gorilla/websocket"
+	"reflect"
+	"sync"
 )
 
 type PlayerInputSystem struct {

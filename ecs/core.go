@@ -49,12 +49,15 @@ func GameLoop(systems []System, rate time.Duration, shutdown chan struct{}) {
 	}
 
 	// Handle shutdown for all
-	defer func(){
+	defer func() {
 		ticker.Stop()
 		for _, system := range systems {
 			if cleaner, ok := system.(Cleaner); ok {
 				cleaner.Cleanup()
 			}
+		}
+		if shutdown != nil {
+			close(shutdown)
 		}
 	}()
 

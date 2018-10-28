@@ -1,8 +1,8 @@
 package game
 
 import (
-	"reflect"
 	"aragno/ecs"
+	"reflect"
 )
 
 type StateOutputSystem struct {

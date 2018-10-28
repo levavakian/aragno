@@ -1,10 +1,10 @@
 package game
 
 import (
-  "aragno/ecs"
+	"aragno/ecs"
 )
 
 const (
-	EntityCreatedPipe   ecs.PipeType = iota
+	EntityCreatedPipe ecs.PipeType = iota
 	EntityDestroyedPipe
 )

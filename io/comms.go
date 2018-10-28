@@ -1,8 +1,8 @@
 package io
 
 import (
-	"fmt"
 	"aragno/game"
+	"fmt"
 	"github.com/gorilla/websocket"
 	"net/http"
 )

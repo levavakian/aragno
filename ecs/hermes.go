@@ -5,10 +5,10 @@ type PipeType uint64
 
 // Message used for communicating between systems
 type Message struct {
-	Pipe               PipeType
-	EntityId           EntityId
-	Targets            []EntityId
-	Data               interface{}
+	Pipe     PipeType
+	EntityId EntityId
+	Targets  []EntityId
+	Data     interface{}
 }
 
 // Messager pub/sub for systems
@@ -21,8 +21,8 @@ func NewHermes() *Hermes {
 }
 
 // AddCallback adds a callback for a given PipeType
-func (hermes *Hermes) AddCallback(msgType PipeType, fn func(*Message)) {
-	hermes.Callbacks[msgType] = append(hermes.Callbacks[msgType], fn)
+func (hermes *Hermes) AddCallback(pipe PipeType, fn func(*Message)) {
+	hermes.Callbacks[pipe] = append(hermes.Callbacks[pipe], fn)
 }
 
 // SendMessage sends a message to the PipeType specified in msg
