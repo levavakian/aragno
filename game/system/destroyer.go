@@ -2,7 +2,8 @@ package system
 
 import (
 	"aragno/ecs"
-	"fmt"
+	"aragno/game/component"
+	"reflect"
 )
 
 type EntityDestroyerSystem struct {
@@ -30,8 +31,17 @@ func NewEntityDestroyerSystem() *EntityDestroyerSystem {
 
 func (eds *EntityDestroyerSystem) Update(dt float32) {
 	for _, entity := range eds.destroyed {
-		fmt.Printf("EntityDestroyerSystem.Update: destroyed entity %s\n", entity)
-		eds.aether.DeregisterAll(entity)
+		eds.Destroy(entity)
 	}
 	eds.destroyed = []ecs.EntityId{}
+}
+
+func (eds *EntityDestroyerSystem) Destroy(id ecs.EntityId) {
+	// Destroy children frist
+	if children, err := eds.aether.Retrieve(id, reflect.TypeOf(&component.Children{})); err == nil {
+		for _, childId := range children.(*component.Children).Ids {
+			eds.Destroy(childId)
+		}
+	}
+	eds.aether.DeregisterAll(id)
 }
