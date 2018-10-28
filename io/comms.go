@@ -1,18 +1,18 @@
 package io
 
 import (
-	"aragno/game"
+	"aragno/game/component"
 	"fmt"
 	"github.com/gorilla/websocket"
 	"net/http"
 )
 
 // Read starts reading from a websocket connection and publishing to input channel
-func Read(connection *websocket.Conn, inputChan chan game.PlayerInput, outputChan chan game.GameState) {
+func Read(connection *websocket.Conn, inputChan chan component.PlayerInput, outputChan chan component.GameState) {
 	fmt.Printf("Starting reader for %s\n", &connection)
 
 	// Send initial message to indicate connection
-	inputChan <- game.PlayerInput{X: 0, Y: 0, Valid: false, Clicked: false, Disconnected: false, Conn: connection, OutputChan: outputChan}
+	inputChan <- component.PlayerInput{X: 0, Y: 0, Valid: false, Clicked: false, Disconnected: false, Conn: connection, OutputChan: outputChan}
 
 	// Read until connection is closed
 	for {
@@ -20,7 +20,7 @@ func Read(connection *websocket.Conn, inputChan chan game.PlayerInput, outputCha
 		if err != nil {
 			fmt.Printf("Read connection closed for %s\n", &connection)
 			connection.Close()
-			inputChan <- game.PlayerInput{Conn: connection, Disconnected: true, OutputChan: outputChan}
+			inputChan <- component.PlayerInput{Conn: connection, Disconnected: true, OutputChan: outputChan}
 			break
 		}
 		fmt.Printf("%s\n", message)
@@ -28,7 +28,7 @@ func Read(connection *websocket.Conn, inputChan chan game.PlayerInput, outputCha
 }
 
 // Write starts writing to websocket connection when game state is received from the game loop
-func Write(connection *websocket.Conn, outputChan chan game.GameState) {
+func Write(connection *websocket.Conn, outputChan chan component.GameState) {
 	fmt.Printf("Starting writer for %s\n", &connection)
 	for {
 		// Receive game state information
@@ -53,7 +53,7 @@ func Write(connection *websocket.Conn, outputChan chan game.GameState) {
 var upgrader = websocket.Upgrader{}
 
 // Connect upgrades websocket connection and starts player input ws reader and game state ws writer
-func Connect(inputChan chan game.PlayerInput) func(http.ResponseWriter, *http.Request) {
+func Connect(inputChan chan component.PlayerInput) func(http.ResponseWriter, *http.Request) {
 	return func(writer http.ResponseWriter, req *http.Request) {
 		// Upgrade http connection and generate new output channel for writing
 		connection, err := upgrader.Upgrade(writer, req, nil)
@@ -61,7 +61,7 @@ func Connect(inputChan chan game.PlayerInput) func(http.ResponseWriter, *http.Re
 			fmt.Printf("Connection failed: %s\n", err)
 			return
 		}
-		outputChan := make(chan game.GameState)
+		outputChan := make(chan component.GameState)
 
 		// Start reader and writer loops
 		go Read(connection, inputChan, outputChan)

@@ -2,17 +2,24 @@ package game
 
 import (
 	"aragno/ecs"
+	"aragno/game/component"
+	"aragno/game/system"
 	"time"
 )
 
-func Loop(input chan PlayerInput) {
+func Loop(input chan component.PlayerInput) {
 	systems := make([]ecs.System, 0)
 	rate := time.Millisecond * 16 // 60Hz
 
 	systems = append(systems,
-		NewPlayerInputSystem(input),
-		NewStateOutputSystem(),
-		NewEntityDestroyerSystem())
+		system.NewPlayerInputSystem(input),
+		system.NewBodySystem(),
+		system.NewStateOutputSystem(),
+		system.NewEntityDestroyerSystem())
 
-	ecs.GameLoop(systems, rate, nil)
+	aether := ecs.NewAether(true)
+	hermes := ecs.NewHermes()
+	registrar := &ecs.EntityRegistrar{}
+
+	ecs.GameLoop(aether, hermes, registrar, systems, rate, nil)
 }

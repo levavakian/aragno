@@ -24,23 +24,28 @@ type System interface {
 	Update(dt float32)
 }
 
+// Initializer interface for systems that can be initialized
 type Initializer interface {
 	Init()
 }
 
+// Cleaner interface for systems that run shutdowns
 type Cleaner interface {
 	Cleanup()
 }
 
-func GameLoop(systems []System, rate time.Duration, shutdown chan struct{}) {
+// GameLoop main game loop
+func GameLoop(
+	aether *Aether,
+	hermes *Hermes,
+	registrar *EntityRegistrar,
+	systems []System,
+	rate time.Duration,
+	shutdown chan struct{}) {
 	// Initialize server rate ticker
 	ticker := time.NewTicker(rate)
 
 	// Handle init for all
-	aether := NewAether()
-	hermes := NewHermes()
-	registrar := &EntityRegistrar{}
-
 	for _, system := range systems {
 		system.Register(aether, hermes, registrar)
 		if initializer, ok := system.(Initializer); ok {

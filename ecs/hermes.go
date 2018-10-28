@@ -16,6 +16,7 @@ type Hermes struct {
 	Callbacks map[PipeType][]func(message *Message)
 }
 
+// NewHermes creates a Hermes message passer
 func NewHermes() *Hermes {
 	return &Hermes{make(map[PipeType][]func(message *Message))}
 }

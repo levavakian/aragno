@@ -2,6 +2,7 @@ package main
 
 import (
 	"aragno/game"
+	"aragno/game/component"
 	"aragno/io"
 	"fmt"
 	"net/http"
@@ -9,7 +10,7 @@ import (
 
 func main() {
 	// Communication channels
-	input := make(chan game.PlayerInput)
+	input := make(chan component.PlayerInput)
 
 	// Game loop
 	go game.Loop(input)

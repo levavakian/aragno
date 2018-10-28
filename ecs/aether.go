@@ -7,18 +7,19 @@ import (
 
 // Aether centralized storage for all components
 type Aether struct {
-	Maps map[reflect.Type]map[EntityId]interface{}
+	Maps        map[reflect.Type]map[EntityId]interface{}
+	nonPtrPanic bool
 }
 
 // NewAether creates a new aether
-func NewAether() *Aether {
-	return &Aether{Maps: make(map[reflect.Type]map[EntityId]interface{})}
+func NewAether(nonPtrPanic bool) *Aether {
+	return &Aether{Maps: make(map[reflect.Type]map[EntityId]interface{}), nonPtrPanic: nonPtrPanic}
 }
 
 // Register adds a component to the aether registry
-func (ae *Aether) Register(id EntityId, cp interface{}) error {
-	if reflect.ValueOf(cp).Kind() != reflect.Ptr {
-		return errors.New("Aether.RegisterComponent: registered type must be pointer")
+func (ae *Aether) Register(id EntityId, cp interface{}) {
+	if ae.nonPtrPanic && reflect.ValueOf(cp).Kind() != reflect.Ptr {
+		panic("Aether.RegisterComponent: registered type must be pointer")
 	}
 
 	cpType := reflect.TypeOf(cp)
@@ -28,14 +29,13 @@ func (ae *Aether) Register(id EntityId, cp interface{}) error {
 	}
 
 	ae.Maps[cpType][id] = cp
-	return nil
 }
 
 // Retrieve retrieves a component based on type and entity id
 func (ae *Aether) Retrieve(id EntityId, cpType reflect.Type) (interface{}, error) {
 	if _, exists := ae.Maps[cpType]; !exists {
-		if cpType.Kind() != reflect.Ptr {
-			return nil, errors.New("Aether.Retrieve: not a pointer type")
+		if ae.nonPtrPanic && cpType.Kind() != reflect.Ptr {
+			panic("Aether.Retrieve: not a pointer type")
 		}
 		return nil, errors.New("Aether.Retrieve: type not found")
 	}
@@ -47,19 +47,23 @@ func (ae *Aether) Retrieve(id EntityId, cpType reflect.Type) (interface{}, error
 	return ae.Maps[cpType][id], nil
 }
 
-func (ae *Aether) RetrieveType(cpType reflect.Type) (map[EntityId]interface{}, error) {
+func (ae *Aether) RetrieveType(cpType reflect.Type) map[EntityId]interface{} {
 	if _, exists := ae.Maps[cpType]; !exists {
-		if cpType.Kind() != reflect.Ptr {
-			return nil, errors.New("Aether.Retrieve: not a pointer type")
+		if ae.nonPtrPanic && cpType.Kind() != reflect.Ptr {
+			panic("Aether.Retrieve: not a pointer type")
 		}
 		ae.Maps[cpType] = make(map[EntityId]interface{})
 	}
 
-	return ae.Maps[cpType], nil
+	return ae.Maps[cpType]
 }
 
 // Deregister deregisters a component based on type and entity id
 func (ae *Aether) DeregisterComponent(id EntityId, cpType reflect.Type) bool {
+	if ae.nonPtrPanic && cpType.Kind() != reflect.Ptr {
+		panic("Aether.Retrieve: not a pointer type")
+	}
+
 	if _, exists := ae.Maps[cpType]; !exists {
 		return false
 	}
