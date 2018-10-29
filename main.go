@@ -13,6 +13,7 @@ func main() {
 	input := make(chan component.PlayerInput)
 
 	// Game loop
+	fmt.Println("Initiating game loop")
 	go game.Loop(input)
 
 	// Server

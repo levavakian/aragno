@@ -26,6 +26,7 @@ func (bs *BodySystem) Init() {
 		id := bs.registrar.NewId()
 		bs.aether.Register(id, &component.SpiderBody{Name: name})
 		bs.aether.Register(id, &component.Pose{5, 5, 5})
+		bs.aether.Register(id, &component.Velocity{5, 5, 5})
 		bs.hermes.Send(&ecs.Message{Pipe: EntityCreatedPipe, EntityId: id})
 	}
 }

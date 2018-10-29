@@ -80,6 +80,7 @@ func (pis *PlayerInputSystem) CreateLeg(playerId ecs.EntityId) ecs.EntityId {
 	id := pis.registrar.NewId()
 	pis.aether.Register(id, &component.Owner{playerId})
 	pis.aether.Register(id, &component.SpiderLeg{})
+	pis.aether.Register(id, &component.Velocity{5, 5, 5})
 	pis.aether.Register(id, &component.Pose{10, 10, 10})
 	return id
 }
