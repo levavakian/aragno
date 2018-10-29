@@ -5,18 +5,21 @@ import (
 	"aragno/game/component"
 )
 
+// BodySystem controls the creation of spider bodies
 type BodySystem struct {
 	aether    *ecs.Aether
 	hermes    *ecs.Hermes
 	registrar *ecs.EntityRegistrar
 }
 
+// Register registers ecs internals
 func (bs *BodySystem) Register(aether *ecs.Aether, hermes *ecs.Hermes, registrar *ecs.EntityRegistrar) {
 	bs.aether = aether
 	bs.hermes = hermes
 	bs.registrar = registrar
 }
 
+// Init initializes spider bodies
 func (bs *BodySystem) Init() {
 	spiders := [...]string{"Carl", "Frog"}
 	for _, name := range spiders {
@@ -27,10 +30,12 @@ func (bs *BodySystem) Init() {
 	}
 }
 
+// NewBodySystem constructor
 func NewBodySystem() *BodySystem {
 	return &BodySystem{}
 }
 
-func (bs *BodySystem) Update(dt float32) {
+// Update does nothing for now
+func (bs *BodySystem) Update(dt float64) {
 	// TODO
 }

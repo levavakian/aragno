@@ -7,6 +7,7 @@ import (
 	"time"
 )
 
+// Loop registers systems and game world, and loops until shutdown
 func Loop(input chan component.PlayerInput) {
 	systems := make([]ecs.System, 0)
 	rate := time.Millisecond * 16 // 60Hz
@@ -14,6 +15,7 @@ func Loop(input chan component.PlayerInput) {
 	systems = append(systems,
 		system.NewPlayerInputSystem(input),
 		system.NewBodySystem(),
+		system.NewMoveSystem(),
 		system.NewStateOutputSystem(),
 		system.NewEntityDestroyerSystem())
 

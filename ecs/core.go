@@ -21,7 +21,7 @@ func (registrar *EntityRegistrar) NewId() EntityId {
 // System interface for types that run updates at every frame and can be ordered by priority
 type System interface {
 	Register(aether *Aether, hermes *Hermes, registrar *EntityRegistrar)
-	Update(dt float32)
+	Update(dt float64)
 }
 
 // Initializer interface for systems that can be initialized
@@ -74,7 +74,7 @@ func GameLoop(
 			return
 		case <-ticker.C:
 			current := time.Now()
-			dt := float32(current.Sub(previous)) / float32(time.Second)
+			dt := float64(current.Sub(previous)) / float64(time.Second)
 			for _, system := range systems {
 				system.Update(dt)
 			}

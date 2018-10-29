@@ -47,6 +47,7 @@ func (ae *Aether) Retrieve(id EntityId, cpType reflect.Type) (interface{}, error
 	return ae.Maps[cpType][id], nil
 }
 
+// RetrieveType retrieves all components of specified type
 func (ae *Aether) RetrieveType(cpType reflect.Type) map[EntityId]interface{} {
 	if _, exists := ae.Maps[cpType]; !exists {
 		if ae.nonPtrPanic && cpType.Kind() != reflect.Ptr {

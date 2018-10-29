@@ -5,10 +5,10 @@ import (
 	"aragno/game/component"
 	"fmt"
 	"github.com/gorilla/websocket"
-	"reflect"
 	"sync"
 )
 
+// PlayerInputSystem handles updating player inputs and creating new players
 type PlayerInputSystem struct {
 	aether    *ecs.Aether
 	hermes    *ecs.Hermes
@@ -19,26 +19,30 @@ type PlayerInputSystem struct {
 	mux       sync.Mutex
 }
 
+// NewPlayerInputSystem constructor
 func NewPlayerInputSystem(inputChan chan component.PlayerInput) *PlayerInputSystem {
 	return &PlayerInputSystem{InputChan: inputChan, Inputs: make(map[*websocket.Conn]component.PlayerInput), CloseSig: make(chan struct{})}
 }
 
+// Register registers ecs internals
 func (pis *PlayerInputSystem) Register(aether *ecs.Aether, hermes *ecs.Hermes, registrar *ecs.EntityRegistrar) {
 	pis.aether = aether
 	pis.hermes = hermes
 	pis.registrar = registrar
 }
 
+// Init launches input collector
 func (pis *PlayerInputSystem) Init() {
 	go pis.Collect()
 }
 
-func (pis *PlayerInputSystem) Update(dt float32) {
+// Update updates inputs, creates new players if new input is detected, destroys player if disconnected
+func (pis *PlayerInputSystem) Update(dt float64) {
 	inputs := pis.PopInputs()
 
 	// Create mapping of Conn -> Entity
 	connToEntity := make(map[*websocket.Conn]ecs.EntityId)
-	for k, v := range pis.aether.RetrieveType(reflect.TypeOf(&component.PlayerInput{})) {
+	for k, v := range pis.aether.RetrieveType(component.PlayerInputType) {
 		connToEntity[v.(*component.PlayerInput).Conn] = k
 	}
 
@@ -71,6 +75,7 @@ func (pis *PlayerInputSystem) Update(dt float32) {
 	}
 }
 
+// CreateLeg creates a new spider leg
 func (pis *PlayerInputSystem) CreateLeg(playerId ecs.EntityId) ecs.EntityId {
 	id := pis.registrar.NewId()
 	pis.aether.Register(id, &component.Owner{playerId})
@@ -79,6 +84,7 @@ func (pis *PlayerInputSystem) CreateLeg(playerId ecs.EntityId) ecs.EntityId {
 	return id
 }
 
+// Cleanup shuts down collector
 func (pis *PlayerInputSystem) Cleanup() {
 	close(pis.CloseSig)
 }

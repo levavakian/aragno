@@ -7,23 +7,27 @@ import (
 	"unsafe"
 )
 
+// StateOutputSystem serializes game state and outputs to listeners
 type StateOutputSystem struct {
 	aether    *ecs.Aether
 	hermes    *ecs.Hermes
 	registrar *ecs.EntityRegistrar
 }
 
+// Register registers ecs internals
 func (sos *StateOutputSystem) Register(aether *ecs.Aether, hermes *ecs.Hermes, registrar *ecs.EntityRegistrar) {
 	sos.aether = aether
 	sos.hermes = hermes
 	sos.registrar = registrar
 }
 
+// NewStateOutputSystem constructor
 func NewStateOutputSystem() *StateOutputSystem {
 	return &StateOutputSystem{}
 }
 
-func (sos *StateOutputSystem) Update(dt float32) {
+// Update serializes game state and sends it off to websocket writers, also sets "owner" for each websocket
+func (sos *StateOutputSystem) Update(dt float64) {
 	// Build game state
 	state := component.GameState{}
 	sos.SerializeBodies(&state)
@@ -40,6 +44,7 @@ func (sos *StateOutputSystem) Update(dt float32) {
 	}
 }
 
+// SerializeBodies serializes spider body game states
 func (sos *StateOutputSystem) SerializeBodies(state *component.GameState) {
 	for id, v := range sos.aether.RetrieveType(reflect.TypeOf(&component.SpiderBody{})) {
 		bs := component.BodyState{}
@@ -51,6 +56,7 @@ func (sos *StateOutputSystem) SerializeBodies(state *component.GameState) {
 	}
 }
 
+// SerializeLegs serializes spider leg game states
 func (sos *StateOutputSystem) SerializeLegs(state *component.GameState) {
 	for id, _ := range sos.aether.RetrieveType(reflect.TypeOf(&component.SpiderLeg{})) {
 		ls := component.LegState{}
