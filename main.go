@@ -18,5 +18,7 @@ func main() {
 
 	// Server
 	http.HandleFunc("/connect", io.Connect(input))
+	http.Handle("/", http.FileServer(http.Dir("ui/build")))
+
 	fmt.Println(http.ListenAndServe("localhost:8000", nil))
 }

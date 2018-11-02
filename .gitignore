@@ -1,5 +1,7 @@
-# JS deps
+# JS
 node_modules/
+ui/build/
+ui/package-lock.json
 
 # Go deps
 vendor/
