@@ -29,7 +29,7 @@ func NewStateOutputSystem() *StateOutputSystem {
 // Update serializes game state and sends it off to websocket writers, also sets "owner" for each websocket
 func (sos *StateOutputSystem) Update(dt float64) {
 	// Build game state
-	state := component.GameState{}
+	state := component.GameState{Tid: component.GameStateTid}
 	sos.SerializeBodies(&state)
 	sos.SerializeLegs(&state)
 

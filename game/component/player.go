@@ -12,7 +12,7 @@ type PlayerInput struct {
 	Valid        bool
 	Clicked      bool
 	Disconnected bool
-	OutputChan   chan GameState
+	OutputChan   chan interface{}
 	Conn         *websocket.Conn
 }
 

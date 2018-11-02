@@ -1,7 +1,13 @@
 package component
 
 import (
+	"aragno/zero"
 	"reflect"
+)
+
+const (
+	GameStateTid = "GameState"
+	MapStateTid  = "MapState"
 )
 
 // Serializable tag component for indicating an entity should be serialized
@@ -24,7 +30,14 @@ type LegState struct {
 
 // GameState overall game state
 type GameState struct {
+	Tid     string      `json:"tid"`
 	Bodies  []BodyState `json:"bodies"`
 	Legs    []LegState  `json:"legs"`
 	OwnerId uintptr     `json:"owner_id"`
+}
+
+// MapState the state of the map
+type MapState struct {
+	Tid      string           `json:"tid"`
+	Surfaces []zero.Rectangle `json:"surfaces"`
 }

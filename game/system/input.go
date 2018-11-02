@@ -62,6 +62,7 @@ func (pis *PlayerInputSystem) Update(dt float64) {
 
 			// Emit player and leg creation events
 			pis.hermes.Send(&ecs.Message{Pipe: EntityCreatedPipe, EntityId: playerId})
+			pis.hermes.Send(&ecs.Message{Pipe: PlayerCreatedPipe, EntityId: playerId})
 			pis.hermes.Send(&ecs.Message{Pipe: EntityCreatedPipe, EntityId: legId})
 
 		} else {

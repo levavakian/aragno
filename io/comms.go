@@ -8,7 +8,7 @@ import (
 )
 
 // Read starts reading from a websocket connection and publishing to input channel
-func Read(connection *websocket.Conn, inputChan chan component.PlayerInput, outputChan chan component.GameState) {
+func Read(connection *websocket.Conn, inputChan chan component.PlayerInput, outputChan chan interface{}) {
 	fmt.Printf("Starting reader for %s\n", &connection)
 
 	// Send initial message to indicate connection
@@ -28,7 +28,7 @@ func Read(connection *websocket.Conn, inputChan chan component.PlayerInput, outp
 }
 
 // Write starts writing to websocket connection when game state is received from the game loop
-func Write(connection *websocket.Conn, outputChan chan component.GameState) {
+func Write(connection *websocket.Conn, outputChan chan interface{}) {
 	fmt.Printf("Starting writer for %s\n", &connection)
 	for {
 		// Receive game state information
@@ -61,7 +61,7 @@ func Connect(inputChan chan component.PlayerInput) func(http.ResponseWriter, *ht
 			fmt.Printf("Connection failed: %s\n", err)
 			return
 		}
-		outputChan := make(chan component.GameState)
+		outputChan := make(chan interface{})
 
 		// Start reader and writer loops
 		go Read(connection, inputChan, outputChan)

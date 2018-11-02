@@ -14,6 +14,7 @@ func Loop(input chan component.PlayerInput) {
 
 	systems = append(systems,
 		system.NewPlayerInputSystem(input),
+		system.NewMapSystem(),
 		system.NewBodySystem(),
 		system.NewMoveSystem(),
 		system.NewStateOutputSystem(),

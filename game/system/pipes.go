@@ -7,4 +7,5 @@ import (
 const (
 	EntityCreatedPipe ecs.PipeType = iota
 	EntityDestroyedPipe
+	PlayerCreatedPipe
 )
