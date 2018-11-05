@@ -49,12 +49,15 @@ func Write(connection *websocket.Conn, outputChan chan interface{}) {
 	}
 }
 
-// Websocket upgrader
-var upgrader = websocket.Upgrader{}
-
 // Connect upgrades websocket connection and starts player input ws reader and game state ws writer
 func Connect(inputChan chan component.PlayerInput) func(http.ResponseWriter, *http.Request) {
 	return func(writer http.ResponseWriter, req *http.Request) {
+		// TODO: handle COR correctly
+		upgrader := websocket.Upgrader{}
+		upgrader.CheckOrigin = func(r *http.Request) bool {
+			return true
+		}
+
 		// Upgrade http connection and generate new output channel for writing
 		connection, err := upgrader.Upgrade(writer, req, nil)
 		if err != nil {

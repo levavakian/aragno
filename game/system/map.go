@@ -22,9 +22,23 @@ func (ms *MapSystem) Register(aether *ecs.Aether, hermes *ecs.Hermes, registrar 
 
 // Init initializes spider bodies
 func (ms *MapSystem) Init() {
-	// TODO: load from config
-	ms.Surfaces = append(ms.Surfaces, zero.Rectangle{zero.Point{-10, 1}, zero.Point{10, 1}, zero.Point{10, -1}})
+	// Starting positions for spiders
+	cid := ms.registrar.NewId()
+	ms.aether.Register(cid, &component.SpiderBody{Name: "Carl"})
+	ms.aether.Register(cid, &component.Pose{300, 50, -0.78539816339})
+	ms.aether.Register(cid, &component.Velocity{0, 0, 0})
+	ms.hermes.Send(&ecs.Message{Pipe: EntityCreatedPipe, EntityId: cid})
 
+	fid := ms.registrar.NewId()
+	ms.aether.Register(fid, &component.SpiderBody{Name: "Frog"})
+	ms.aether.Register(fid, &component.Pose{-300, 50, 0.78539816339})
+	ms.aether.Register(fid, &component.Velocity{0, 0, 0})
+	ms.hermes.Send(&ecs.Message{Pipe: EntityCreatedPipe, EntityId: fid})
+
+	// TODO: load from config
+	ms.Surfaces = append(ms.Surfaces, zero.Rectangle{zero.Point{-500, -150}, zero.Point{500, -150}, zero.Point{500, -250}})
+
+	// Register callback for sending out maps to subscribers
 	ms.hermes.AddCallback(PlayerCreatedPipe, func(msg *ecs.Message) {
 		if input, err := ms.aether.Retrieve(msg.EntityId, component.PlayerInputType); err == nil {
 			// Do deep copy of surfaces and transmit
