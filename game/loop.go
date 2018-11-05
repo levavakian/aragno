@@ -16,6 +16,7 @@ func Loop(input chan component.PlayerInput) {
 		system.NewPlayerInputSystem(input),
 		system.NewMapSystem(),
 		system.NewMoveSystem(),
+		system.NewDynamicsSystem(),
 		system.NewStateOutputSystem(),
 		system.NewEntityDestroyerSystem())
 
