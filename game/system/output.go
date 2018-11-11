@@ -49,8 +49,8 @@ func (sos *StateOutputSystem) SerializeBodies(state *component.GameState) {
 	for id, v := range sos.aether.RetrieveType(reflect.TypeOf(&component.SpiderBody{})) {
 		bs := component.BodyState{}
 		bs.Name = v.(*component.SpiderBody).Name
-		if v, err := sos.aether.Retrieve(id, reflect.TypeOf(&component.Pose{})); err == nil {
-			bs.Pose = *(v.(*component.Pose))
+		if p, err := sos.aether.Retrieve(id, component.PoseType); err == nil {
+			bs.Pose = *(p.(*component.Pose))
 		}
 		state.Bodies = append(state.Bodies, bs)
 	}

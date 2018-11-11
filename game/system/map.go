@@ -4,6 +4,7 @@ import (
 	"aragno/ecs"
 	"aragno/game/component"
 	"aragno/zero"
+	"aragno/dynamo"
 )
 
 type MapSystem struct {
@@ -27,12 +28,14 @@ func (ms *MapSystem) Init() {
 	ms.aether.Register(cid, &component.SpiderBody{Name: "Carl"})
 	ms.aether.Register(cid, &component.Pose{300, 50, -0.78539816339})
 	ms.aether.Register(cid, &component.Velocity{0, 0, 0})
+	ms.aether.Register(cid, dynamo.NewRectangleBody("gimme a name", 300, 50, 1, zero.Pose{300, 50, 0.78}))
 	ms.hermes.Send(&ecs.Message{Pipe: EntityCreatedPipe, EntityId: cid})
 
 	fid := ms.registrar.NewId()
 	ms.aether.Register(fid, &component.SpiderBody{Name: "Frog"})
 	ms.aether.Register(fid, &component.Pose{-300, 50, 0.78539816339})
 	ms.aether.Register(fid, &component.Velocity{0, 0, 0})
+	ms.aether.Register(fid, dynamo.NewRectangleBody("gimme a name", 300, 50, 1, zero.Pose{-300, 50, 0.78}))
 	ms.hermes.Send(&ecs.Message{Pipe: EntityCreatedPipe, EntityId: fid})
 
 	// TODO: load from config
