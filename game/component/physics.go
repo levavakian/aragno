@@ -1,8 +1,8 @@
 package component
 
 import (
-	"aragno/ecs"
 	"reflect"
+	"aragno/dynamo"
 )
 
 // Pose pose for a rigid body component
@@ -23,11 +23,5 @@ type Velocity struct {
 
 var VelocityType = reflect.TypeOf(&Velocity{})
 
-// PivotRoot indicates a connection to another rigid body with a pivot joint
-type PivotRoot struct {
-	Root ecs.EntityId
-	X    float64
-	Y    float64
-}
-
-var PivotRootType = reflect.TypeOf(&PivotRoot{})
+// The body struct is temporarily implemented in the dynamo library
+var BodyType = reflect.TypeOf(&dynamo.Body{})
