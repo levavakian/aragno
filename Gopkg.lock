@@ -2,16 +2,111 @@
 
 
 [[projects]]
-  digest = "1:7b5c6e2eeaa9ae5907c391a91c132abfd5c9e8a784a341b5625e750c67e6825d"
+  digest = "1:9f42202ac457c462ad8bb9642806d275af9ab4850cf0b1960b9c6f083d4a309a"
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  pruneopts = "T"
+  revision = "8991bc29aa16c548c550c7ff78260e27b9ab7c73"
+  version = "v1.1.1"
+
+[[projects]]
+  branch = "master"
+  digest = "1:91502b60a8323779cbd877daf50a3c62c3600a3412649b97f9f5d79cbb49a7df"
+  name = "github.com/faiface/glhf"
+  packages = ["."]
+  pruneopts = "T"
+  revision = "82a6317ac380cdc61567d729fe48833d75b8108e"
+
+[[projects]]
+  branch = "master"
+  digest = "1:f43ae18fea96ddd49340e65001d1b556e2dba024228a93ee9eec25fe3fe52939"
+  name = "github.com/faiface/mainthread"
+  packages = ["."]
+  pruneopts = "T"
+  revision = "8b78f0a41ae388189090ac4506612659fa53082b"
+
+[[projects]]
+  digest = "1:348bc4af96f9f865dd3ae8430b419e8c389b761958d11a0aa7849946102699a5"
+  name = "github.com/faiface/pixel"
+  packages = [
+    ".",
+    "pixelgl",
+  ]
+  pruneopts = "T"
+  revision = "0c2d627cfa32f437abe22d6a6ee1de7d102c0264"
+  version = "v0.8.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:38da3c3ad18133fd6f44615ae82d573f65df31aecaee8776121547fea035d0e0"
+  name = "github.com/go-gl/gl"
+  packages = ["v3.3-core/gl"]
+  pruneopts = "T"
+  revision = "55b76b7df9d25d70b63e31a767f47158292b85d8"
+
+[[projects]]
+  branch = "master"
+  digest = "1:e8d292253ac63a2c277fd16423943006a72a2ef335b402ac8618a41ad360bd52"
+  name = "github.com/go-gl/glfw"
+  packages = ["v3.2/glfw"]
+  pruneopts = "T"
+  revision = "691ee1b84c51ae625ed1aafebc915d3db3d63d66"
+
+[[projects]]
+  branch = "master"
+  digest = "1:d9a28ab10799bbb0ae29c7ad010083f05cafb81593b104783c871586fade3a56"
+  name = "github.com/go-gl/mathgl"
+  packages = ["mgl32"]
+  pruneopts = "T"
+  revision = "cdf14b6b8f8a4a1bfb003dd5119205c5f711d85a"
+
+[[projects]]
+  digest = "1:80f394537967d97fcc0da30762843805c8aaea7d208c43c99d1fe988a8888f0d"
   name = "github.com/gorilla/websocket"
   packages = ["."]
-  pruneopts = "UT"
+  pruneopts = "T"
   revision = "66b9c49e59c6c48f0ffce28c2d8b8a5678502c6d"
   version = "v1.4.0"
+
+[[projects]]
+  digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  pruneopts = "T"
+  revision = "645ef00459ed84a119197bfb8d8205042c6df63d"
+  version = "v0.8.0"
+
+[[projects]]
+  digest = "1:22aa691fe0213cb5c07d103f9effebcb7ad04bee45a0ce5fe5369d0ca2ec3a1f"
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  pruneopts = "T"
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
+
+[[projects]]
+  digest = "1:e95496462101745805bd4e041a5b841e108c7cf761264d53648246308de2761e"
+  name = "github.com/stretchr/testify"
+  packages = ["assert"]
+  pruneopts = "T"
+  revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
+  version = "v1.2.2"
+
+[[projects]]
+  branch = "master"
+  digest = "1:34aa8d327ff3059c771b721563412a61e8a37af03846a31c56d5dd9985ca32f9"
+  name = "golang.org/x/image"
+  packages = ["math/f32"]
+  pruneopts = "T"
+  revision = "cd38e8056d9b27bb2f265effa37fb0ea6b8a7f0f"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  input-imports = ["github.com/gorilla/websocket"]
+  input-imports = [
+    "github.com/faiface/pixel/pixelgl",
+    "github.com/gorilla/websocket",
+    "github.com/stretchr/testify/assert",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
