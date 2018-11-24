@@ -23,7 +23,7 @@ FROM golang:latest
 COPY --from=stageforcopy /aragno /go/src/aragno
 RUN go get -u github.com/golang/dep/cmd/dep
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
-RUN DEBIAN_FRONTEND=noninteractive  apt-get update -y && apt-get install npm build-essential libg11-mesa-dev xorg-dev -y
+RUN DEBIAN_FRONTEND=noninteractive  apt-get update -y && apt-get install npm build-essential libgl1-mesa-dev xorg-dev -y
 
 WORKDIR /go/src/aragno
 RUN cd ui && npm install
