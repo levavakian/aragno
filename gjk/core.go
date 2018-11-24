@@ -76,10 +76,19 @@ func OriginInTriangle(a zero.Vector2D, b zero.Vector2D, c zero.Vector2D) bool {
 
 func ClosestShapePnts(pnta SupportComponents, pntb SupportComponents) (zero.Vector2D, zero.Vector2D) {
 	L := pntb.Pnt.Sub(pnta.Pnt)
+	if L.IsZero(zero.Tolerance) {
+		return pnta.Pnt, pntb.Pnt
+	}
 	LL2 := L.Dot(L)
 	LA := L.Dot(pnta.Pnt)
 
 	lambda2 := -LA / LL2
+	if lambda2 > 1.0 {
+		lambda2 = 1.0
+	}
+	if lambda2 < 0.0 {
+		lambda2 = 0.0
+	}
 	lambda1 := 1 - lambda2
 
 	shapeAClosest := pnta.ShapeAPnt.Mult(lambda1).Add(pntb.ShapeAPnt.Mult(lambda2))
@@ -111,9 +120,9 @@ func CheckCollision(shapeA Collidable, shapeB Collidable) CollisionReport {
 		dc := c.Pnt.Dot(d)
 		da := simplex.PntA.Pnt.Dot(d)
 
-		if (dc - da < zero.Tolerance || SameExact(simplex.PntA.Pnt, c.Pnt) || SameExact(simplex.PntB.Pnt, c.Pnt)) {
+		if dc - da < zero.Tolerance || SameExact(simplex.PntA.Pnt, c.Pnt) || SameExact(simplex.PntB.Pnt, c.Pnt) {
 			sApnt, sBpnt := ClosestShapePnts(simplex.PntA, simplex.PntB)
-			return CollisionReport{sApnt, sBpnt, false, d.Magnitude()}
+			return CollisionReport{sApnt, sBpnt, false, sApnt.Sub(sBpnt).Magnitude()}
 		}
 
 		p1 := ClosestPointToOrigin(simplex.PntA.Pnt, c.Pnt)

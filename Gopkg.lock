@@ -30,6 +30,7 @@
   name = "github.com/faiface/pixel"
   packages = [
     ".",
+    "imdraw",
     "pixelgl",
   ]
   pruneopts = "T"
@@ -96,17 +97,34 @@
   branch = "master"
   digest = "1:34aa8d327ff3059c771b721563412a61e8a37af03846a31c56d5dd9985ca32f9"
   name = "golang.org/x/image"
-  packages = ["math/f32"]
+  packages = [
+    "colornames",
+    "math/f32",
+  ]
   pruneopts = "T"
   revision = "cd38e8056d9b27bb2f265effa37fb0ea6b8a7f0f"
+
+[[projects]]
+  branch = "master"
+  digest = "1:a92d7dd2268883d2d466576cb7319cc5321c906d853da4b4ac1ffc407895f809"
+  name = "golang.org/x/net"
+  packages = [
+    "html",
+    "html/atom",
+  ]
+  pruneopts = "T"
+  revision = "adae6a3d119ae4890b46832a2e88a95adc62b8e7"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/faiface/pixel",
+    "github.com/faiface/pixel/imdraw",
     "github.com/faiface/pixel/pixelgl",
     "github.com/gorilla/websocket",
     "github.com/stretchr/testify/assert",
+    "golang.org/x/image/colornames",
   ]
   solver-name = "gps-cdcl"
   solver-version = 1
