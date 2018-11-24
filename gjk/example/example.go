@@ -10,7 +10,6 @@ import (
 	"aragno/gjk"
 
 	"fmt"
-	"time"
 )
 
 func run() {
@@ -41,8 +40,6 @@ func run() {
 			accumPoints = []pixel.Vec{}
 		}
 
-		st := time.Now()
-
 		mpos := win.MousePosition()
 		poly := gjk.Polygon{}
 
@@ -68,8 +65,6 @@ func run() {
 			imd.Push(pixel.V(report.ClosestPointShapeA.X, report.ClosestPointShapeA.Y))
 			imd.Circle(10, 0)
 		}
-
-		fmt.Println(time.Since(st))
 
 		for idx, shape := range shapes {
 			if len(collisions) > 0 && collisions[idx] {
