@@ -1,8 +1,8 @@
 package gjk
 
 import (
-	"math"
 	"aragno/zero"
+	"math"
 )
 
 type Polygon struct {

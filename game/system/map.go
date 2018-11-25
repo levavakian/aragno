@@ -1,10 +1,10 @@
 package system
 
 import (
+	"aragno/dynamo"
 	"aragno/ecs"
 	"aragno/game/component"
 	"aragno/zero"
-	"aragno/dynamo"
 )
 
 type MapSystem struct {

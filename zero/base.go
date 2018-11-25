@@ -60,7 +60,7 @@ func (vec Vector2D) Rotate(rot float64) Vector2D {
 	sint := math.Sin(rot)
 
 	return Vector2D{cost*vec.X - sint*vec.Y,
-					sint*vec.X + cost*vec.Y}
+		sint*vec.X + cost*vec.Y}
 }
 
 func (tf Tf2D) Transform(vec Vector2D) Vector2D {
@@ -68,7 +68,7 @@ func (tf Tf2D) Transform(vec Vector2D) Vector2D {
 	sint := math.Sin(tf.Rotation)
 
 	return Vector2D{cost*vec.X - sint*vec.Y + tf.Translation.X,
-					sint*vec.X + cost*vec.Y + tf.Translation.Y}
+		sint*vec.X + cost*vec.Y + tf.Translation.Y}
 }
 
 func (v1 Vector2D) Dot(v2 Vector2D) float64 {

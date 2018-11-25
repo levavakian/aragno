@@ -1,12 +1,12 @@
 package gjk
 
 import (
-	"math"
 	"aragno/zero"
+	"math"
 )
 
 type EPANode struct {
-	Supp  SupportComponents
+	Supp SupportComponents
 	Next *EPANode
 }
 
@@ -81,7 +81,7 @@ func ClosestEdge(epa EPA) Edge {
 		}
 
 		if node.Next == epa.Root {
-			break;
+			break
 		}
 		node = node.Next
 	}
@@ -97,7 +97,7 @@ func GetPenetrationInfo(shapea Collidable, shapeb Collidable, pnta SupportCompon
 
 		support := Support(shapea, shapeb, edge.Normal)
 		depth := support.Pnt.Dot(edge.Normal)
-		if depth - edge.Distance < zero.Tolerance {
+		if depth-edge.Distance < zero.Tolerance {
 			contacta, contactb := GetContactPoints(epa, edge)
 			return PenetrationInfo{depth, edge.Normal, contacta, contactb}
 		}

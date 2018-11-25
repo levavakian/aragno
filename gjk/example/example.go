@@ -2,15 +2,15 @@ package main
 
 import (
 	"github.com/faiface/pixel"
+	"github.com/faiface/pixel/imdraw"
 	"github.com/faiface/pixel/pixelgl"
 	"golang.org/x/image/colornames"
-	"github.com/faiface/pixel/imdraw"
 
-	"aragno/zero"
 	"aragno/gjk"
+	"aragno/zero"
 
 	"fmt"
-        "time"
+	"time"
 )
 
 func run() {
@@ -67,8 +67,8 @@ func run() {
 				imd.Color = colornames.Blueviolet
 				imd.EndShape = imdraw.RoundEndShape
 				imd.Push(pixel.V(report.Penetration.ContactShapeB.X, report.Penetration.ContactShapeB.Y))
-				imd.Push(pixel.V(report.Penetration.ContactShapeB.X + report.Penetration.Normal.X * report.Penetration.Depth,
-								 report.Penetration.ContactShapeB.Y + report.Penetration.Normal.Y * report.Penetration.Depth))
+				imd.Push(pixel.V(report.Penetration.ContactShapeB.X+report.Penetration.Normal.X*report.Penetration.Depth,
+					report.Penetration.ContactShapeB.Y+report.Penetration.Normal.Y*report.Penetration.Depth))
 				imd.Line(5)
 			}
 

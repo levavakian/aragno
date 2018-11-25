@@ -60,13 +60,13 @@ func ClosestPointToOrigin(pnta zero.Vector2D, pntb zero.Vector2D) zero.Vector2D 
 }
 
 func OriginInTriangle(a zero.Vector2D, b zero.Vector2D, c zero.Vector2D) bool {
-	denom := (b.Y - c.Y)*(a.X - c.X) + (c.X - b.X)*(a.Y - c.Y)
-	s := ((b.Y - c.Y)*(-c.X) + (c.X - b.X)*(-c.Y)) / denom
+	denom := (b.Y-c.Y)*(a.X-c.X) + (c.X-b.X)*(a.Y-c.Y)
+	s := ((b.Y-c.Y)*(-c.X) + (c.X-b.X)*(-c.Y)) / denom
 	if s > 1.0 || s < 0.0 {
 		return false
 	}
 
-	t := ((c.Y - a.Y)*(-c.X) + (a.X - c.X)*(-c.Y)) / denom
+	t := ((c.Y-a.Y)*(-c.X) + (a.X-c.X)*(-c.Y)) / denom
 	if t > 1.0 || t < 0.0 {
 		return false
 	}
@@ -117,7 +117,7 @@ func CheckCollision(shapeA Collidable, shapeB Collidable) CollisionReport {
 		d = d.Inverse()
 
 		c := Support(shapeA, shapeB, d)
-		if (d.IsZero(zero.Tolerance)) {
+		if d.IsZero(zero.Tolerance) {
 			// return CollisionReport{zero.Vector2D{}, zero.Vector2D{}, true, 0, GetPenetrationInfo(shapeA, shapeB, simplex.PntA, simplex.PntB, c)}
 			return CollisionReport{zero.Vector2D{}, zero.Vector2D{}, true, 0, PenetrationInfo{}}
 		}
@@ -125,7 +125,7 @@ func CheckCollision(shapeA Collidable, shapeB Collidable) CollisionReport {
 		dc := c.Pnt.Dot(d)
 		da := simplex.PntA.Pnt.Dot(d)
 
-		if dc - da < zero.Tolerance || SameExact(simplex.PntA.Pnt, c.Pnt) || SameExact(simplex.PntB.Pnt, c.Pnt) {
+		if dc-da < zero.Tolerance || SameExact(simplex.PntA.Pnt, c.Pnt) || SameExact(simplex.PntB.Pnt, c.Pnt) {
 			sApnt, sBpnt := ClosestShapePnts(simplex.PntA, simplex.PntB)
 			return CollisionReport{sApnt, sBpnt, false, sApnt.Sub(sBpnt).Magnitude(), PenetrationInfo{}}
 		}
@@ -137,7 +137,7 @@ func CheckCollision(shapeA Collidable, shapeB Collidable) CollisionReport {
 			return CollisionReport{zero.Vector2D{}, zero.Vector2D{}, true, 0, GetPenetrationInfo(shapeA, shapeB, simplex.PntA, simplex.PntB, c)}
 		}
 
-		if (p1.Magnitude() < p2.Magnitude()) {
+		if p1.Magnitude() < p2.Magnitude() {
 			simplex.PntB = c
 			d = p1
 		} else {
