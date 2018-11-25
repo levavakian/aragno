@@ -16,7 +16,7 @@ import (
 func run() {
 	cfg := pixelgl.WindowConfig{
 		Title:  "Pixel Rocks!",
-		Bounds: pixel.R(0, 0, 1600, 1000),
+		Bounds: pixel.R(0, 0, 1600, 800),
 		VSync:  true,
 	}
 	win, err := pixelgl.NewWindow(cfg)
@@ -59,6 +59,19 @@ func run() {
 			report := gjk.CheckCollision(poly, spoly)
 			collisions = append(collisions, report.Collision)
 
+			if report.Collision {
+				imd.Color = pixel.RGB(.2, .2, .8)
+				imd.Push(pixel.V(report.Penetration.ContactShapeB.X, report.Penetration.ContactShapeB.Y))
+				imd.Circle(10, 0)
+
+				imd.Color = colornames.Blueviolet
+				imd.EndShape = imdraw.RoundEndShape
+				imd.Push(pixel.V(report.Penetration.ContactShapeB.X, report.Penetration.ContactShapeB.Y))
+				imd.Push(pixel.V(report.Penetration.ContactShapeB.X + report.Penetration.Normal.X * report.Penetration.Depth,
+								 report.Penetration.ContactShapeB.Y + report.Penetration.Normal.Y * report.Penetration.Depth))
+				imd.Line(5)
+			}
+
 			imd.Color = pixel.RGB(0, 1, 0)
 			imd.Push(pixel.V(report.ClosestPointShapeB.X, report.ClosestPointShapeB.Y))
 			imd.Circle(10, 0)
@@ -76,7 +89,7 @@ func run() {
 			for _, vec := range shape {
 				imd.Push(vec)
 			}
-			imd.Polygon(0)
+			imd.Polygon(5)
 		}
 
 		imd.Color = pixel.RGB(0, 1, 0)

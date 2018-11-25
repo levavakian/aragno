@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	Tolerance = 1.0e-20
+	Tolerance = 1.0e-10
 )
 
 type Vector2D struct {
@@ -50,6 +50,11 @@ func (v1 Vector2D) Magnitude() float64 {
 	return math.Sqrt(v1.Dot(v1))
 }
 
+func (v1 Vector2D) Normalize() Vector2D {
+	imag := 1.0 / v1.Magnitude()
+	return Vector2D{v1.X * imag, v1.Y * imag}
+}
+
 func (vec Vector2D) Rotate(rot float64) Vector2D {
 	cost := math.Cos(rot)
 	sint := math.Sin(rot)
@@ -68,11 +73,4 @@ func (tf Tf2D) Transform(vec Vector2D) Vector2D {
 
 func (v1 Vector2D) Dot(v2 Vector2D) float64 {
 	return v1.X*v2.X + v1.Y*v2.Y
-}
-
-func TripleProduct(a Vector2D, b Vector2D, c Vector2D) Vector2D {
-	// (A x B).Z
-	z := a.X * b.Y - a.Y * b.X
-
-	return Vector2D{c.Y * z, -c.X * z}
 }
