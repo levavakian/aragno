@@ -44,10 +44,10 @@ func run() {
 		mpos := win.MousePosition()
 		poly := gjk.Polygon{}
 
-		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X - 50, mpos.Y - 10})
-		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X + 50, mpos.Y - 10})
-		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X + 50, mpos.Y + 10})
-		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X - 50, mpos.Y + 10})
+		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X - 50, mpos.Y})
+		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X, mpos.Y + 50})
+		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X + 50, mpos.Y})
+		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X, mpos.Y - 50})
 
 		imd.Color = pixel.RGB(1, 0, 0)
 		for _, pnt := range poly.Pnts {
