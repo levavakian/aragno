@@ -9,7 +9,7 @@ import (
 
 // Read starts reading from a websocket connection and publishing to input channel
 func Read(connection *websocket.Conn, inputChan chan component.PlayerInput, outputChan chan interface{}) {
-	fmt.Printf("Starting reader for %s\n", &connection)
+	fmt.Printf("Starting reader for %p\n", &connection)
 
 	// Send initial message to indicate connection
 	inputChan <- component.PlayerInput{X: 0, Y: 0, Valid: false, Clicked: false, Disconnected: false, Conn: connection, OutputChan: outputChan}
@@ -18,7 +18,7 @@ func Read(connection *websocket.Conn, inputChan chan component.PlayerInput, outp
 	for {
 		_, message, err := connection.ReadMessage()
 		if err != nil {
-			fmt.Printf("Read connection closed for %s\n", &connection)
+			fmt.Printf("Read connection closed for %p\n", &connection)
 			connection.Close()
 			inputChan <- component.PlayerInput{Conn: connection, Disconnected: true, OutputChan: outputChan}
 			break
@@ -29,21 +29,21 @@ func Read(connection *websocket.Conn, inputChan chan component.PlayerInput, outp
 
 // Write starts writing to websocket connection when game state is received from the game loop
 func Write(connection *websocket.Conn, outputChan chan interface{}) {
-	fmt.Printf("Starting writer for %s\n", &connection)
+	fmt.Printf("Starting writer for %p\n", &connection)
 	for {
 		// Receive game state information
 		output, ok := (<-outputChan)
 
 		// Close out if game loop has terminated the write connection
 		if !ok {
-			fmt.Printf("Close requested for %s\n", &connection)
+			fmt.Printf("Close requested for %p\n", &connection)
 			break
 		}
 
 		// Publish game state
 		err := connection.WriteJSON(output)
 		if err != nil {
-			fmt.Printf("Write connection failed with %s for %s\n", err, &connection)
+			fmt.Printf("Write connection failed with %s for %p\n", err, &connection)
 			connection.Close()
 		}
 	}

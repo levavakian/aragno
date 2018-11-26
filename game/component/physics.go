@@ -1,8 +1,8 @@
 package component
 
 import (
-	"reflect"
 	"aragno/dynamo"
+	"reflect"
 )
 
 // Pose pose for a rigid body component

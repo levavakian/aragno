@@ -1,15 +1,15 @@
 package zero
 
 type Pose struct {
-	X float64
-	Y float64
+	X     float64
+	Y     float64
 	Theta float64
 }
 
-func(p *Pose) Sum(p2 Pose) {
-	p.X  = p.X + p2.X
-	p.Y  = p.Y + p2.Y
-	p.Theta  = NormalizeBipolar(p.Theta + p2.Theta)
+func (p *Pose) Sum(p2 Pose) {
+	p.X = p.X + p2.X
+	p.Y = p.Y + p2.Y
+	p.Theta = NormalizeBipolar(p.Theta + p2.Theta)
 }
 
 type Point struct {
