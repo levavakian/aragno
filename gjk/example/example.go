@@ -44,10 +44,17 @@ func run() {
 		mpos := win.MousePosition()
 		poly := gjk.Polygon{}
 
-		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X - 1, mpos.Y - 1})
-		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X + 1, mpos.Y - 1})
-		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X + 1, mpos.Y + 1})
-		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X - 1, mpos.Y + 1})
+		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X - 50, mpos.Y - 10})
+		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X + 50, mpos.Y - 10})
+		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X + 50, mpos.Y + 10})
+		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X - 50, mpos.Y + 10})
+
+		imd.Color = pixel.RGB(1, 0, 0)
+		for _, pnt := range poly.Pnts {
+			imd.Push(pixel.V(pnt.X, pnt.Y))
+		}
+		imd.Polygon(5)
+
 
 		collisions = []bool{}
 		for _, shape := range shapes {
@@ -74,9 +81,6 @@ func run() {
 
 			imd.Color = pixel.RGB(0, 1, 0)
 			imd.Push(pixel.V(report.ClosestPointShapeB.X, report.ClosestPointShapeB.Y))
-			imd.Circle(10, 0)
-			imd.Color = pixel.RGB(.5, .5, 0)
-			imd.Push(pixel.V(report.ClosestPointShapeA.X, report.ClosestPointShapeA.Y))
 			imd.Circle(10, 0)
 		}
 
