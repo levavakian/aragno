@@ -26,10 +26,11 @@ type EPA struct {
 }
 
 type PenetrationInfo struct {
-	Depth         float64
-	Normal        zero.Vector2D
-	ContactShapeA zero.Vector2D
-	ContactShapeB zero.Vector2D
+	Depth                float64
+	Normal               zero.Vector2D
+	ContactShapeA        zero.Vector2D
+	ContactShapeB        zero.Vector2D
+	ContactManifold      []ContactPoint
 }
 
 func GetContactPoints(epa EPA, edge Edge) (zero.Vector2D, zero.Vector2D) {
@@ -88,7 +89,7 @@ func ClosestEdge(epa EPA) Edge {
 	return edge
 }
 
-func GetPenetrationInfo(shapea Collidable, shapeb Collidable, pnta SupportComponents, pntb SupportComponents, pntc SupportComponents) PenetrationInfo {
+func GetPenetrationInfo(shapea Polygon, shapeb Polygon, pnta SupportComponents, pntb SupportComponents, pntc SupportComponents) PenetrationInfo {
 	epa := InitEPA(pnta, pntb, pntc)
 
 	// for i := 0; i < MaxIter; i++ {
@@ -99,7 +100,7 @@ func GetPenetrationInfo(shapea Collidable, shapeb Collidable, pnta SupportCompon
 		depth := support.Pnt.Dot(edge.Normal)
 		if depth-edge.Distance < zero.Tolerance {
 			contacta, contactb := GetContactPoints(epa, edge)
-			return PenetrationInfo{depth, edge.Normal, contacta, contactb}
+			return PenetrationInfo{depth, edge.Normal, contacta, contactb, GetContactManifold(shapea, shapeb, edge.Normal)}
 		}
 
 		edge.Parent.Insert(support)

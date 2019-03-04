@@ -73,9 +73,11 @@ func run() {
 
 				imd.Color = colornames.Blueviolet
 				imd.EndShape = imdraw.RoundEndShape
-				imd.Push(pixel.V(report.Penetration.ContactShapeB.X, report.Penetration.ContactShapeB.Y))
-				imd.Push(pixel.V(report.Penetration.ContactShapeB.X+report.Penetration.Normal.X*report.Penetration.Depth,
-					report.Penetration.ContactShapeB.Y+report.Penetration.Normal.Y*report.Penetration.Depth))
+				fmt.Println("MANIFOLD")
+				fmt.Println(len(report.Penetration.ContactManifold))
+				for _, cp := range report.Penetration.ContactManifold {
+					imd.Push(pixel.V(cp.Pnt.X, cp.Pnt.Y))
+				}
 				imd.Line(5)
 			}
 

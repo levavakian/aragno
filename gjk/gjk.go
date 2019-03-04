@@ -8,10 +8,6 @@ const (
 	MaxIter = 5
 )
 
-type Collidable interface {
-	FurthestPoint(zero.Vector2D) zero.Vector2D
-}
-
 type CollisionReport struct {
 	ClosestPointShapeA zero.Vector2D
 	ClosestPointShapeB zero.Vector2D
@@ -31,7 +27,7 @@ type Simplex struct {
 	PntB SupportComponents
 }
 
-func Support(shapeA Collidable, shapeB Collidable, dir zero.Vector2D) SupportComponents {
+func Support(shapeA Polygon, shapeB Polygon, dir zero.Vector2D) SupportComponents {
 	vecA := shapeA.FurthestPoint(dir)
 	vecB := shapeB.FurthestPoint(dir.Inverse())
 	return SupportComponents{vecA, vecB, vecA.Sub(vecB)}
@@ -105,7 +101,7 @@ func SameExact(veca zero.Vector2D, vecb zero.Vector2D) bool {
 	return veca.X == vecb.X && veca.Y == vecb.Y
 }
 
-func CheckCollision(shapeA Collidable, shapeB Collidable) CollisionReport {
+func CheckCollision(shapeA Polygon, shapeB Polygon) CollisionReport {
 	// TODO: do line of centers of shapes
 	d := zero.Vector2D{1, 1}
 	simplex := Simplex{}
