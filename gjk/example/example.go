@@ -44,10 +44,14 @@ func run() {
 		mpos := win.MousePosition()
 		poly := gjk.Polygon{}
 
-		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X - 50, mpos.Y})
-		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X, mpos.Y + 50})
-		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X + 50, mpos.Y})
-		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X, mpos.Y - 50})
+		// poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X - 50, mpos.Y})
+		// poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X, mpos.Y + 50})
+		// poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X + 50, mpos.Y})
+		// poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X, mpos.Y - 50})
+		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X - 50, mpos.Y - 50})
+		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X + 50, mpos.Y - 50})
+		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X + 50, mpos.Y + 50})
+		poly.Pnts = append(poly.Pnts, zero.Vector2D{mpos.X - 50, mpos.Y + 50})
 
 		imd.Color = pixel.RGB(1, 0, 0)
 		for _, pnt := range poly.Pnts {
@@ -66,27 +70,7 @@ func run() {
 			report := gjk.CheckCollision(poly, spoly)
 			collisions = append(collisions, report.Collision)
 
-			if report.Collision {
-				imd.Color = pixel.RGB(.2, .2, .8)
-				imd.Push(pixel.V(report.Penetration.ContactShapeB.X, report.Penetration.ContactShapeB.Y))
-				imd.Circle(10, 0)
-
-				imd.Color = colornames.Blueviolet
-				imd.EndShape = imdraw.RoundEndShape
-				fmt.Println("MANIFOLD")
-				fmt.Println(len(report.Penetration.ContactManifold))
-				for _, cp := range report.Penetration.ContactManifold {
-					imd.Push(pixel.V(cp.Pnt.X, cp.Pnt.Y))
-				}
-				imd.Line(5)
-			}
-
-			imd.Color = pixel.RGB(0, 1, 0)
-			imd.Push(pixel.V(report.ClosestPointShapeB.X, report.ClosestPointShapeB.Y))
-			imd.Circle(10, 0)
-		}
-
-		for idx, shape := range shapes {
+			for idx, shape := range shapes {
 			if len(collisions) > 0 && collisions[idx] {
 				imd.Color = pixel.RGB(1, 0, 0)
 			} else {
@@ -96,6 +80,24 @@ func run() {
 				imd.Push(vec)
 			}
 			imd.Polygon(5)
+		}
+
+			if report.Collision {
+				imd.Color = pixel.RGB(.2, .2, .8)
+				imd.Push(pixel.V(report.Penetration.ContactShapeB.X, report.Penetration.ContactShapeB.Y))
+				imd.Circle(10, 0)
+
+				imd.Color = colornames.Blueviolet
+				imd.EndShape = imdraw.RoundEndShape
+				for _, cp := range report.Penetration.ContactManifold {
+					imd.Push(pixel.V(cp.Pnt.X, cp.Pnt.Y))
+				}
+				imd.Line(5)
+			}
+
+			imd.Color = pixel.RGB(0, 1, 0)
+			imd.Push(pixel.V(report.ClosestPointShapeB.X, report.ClosestPointShapeB.Y))
+			imd.Circle(10, 0)
 		}
 
 		imd.Color = pixel.RGB(0, 1, 0)

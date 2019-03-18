@@ -3,7 +3,6 @@ package gjk
 import (
   "aragno/zero"
   "math"
-  "fmt"
 )
 
 type ContactPoint struct {
@@ -23,30 +22,21 @@ func (candidate *CandidateEdge) Edge() zero.Vector2D {
 
 func GetContactManifold(shapea Polygon, shapeb Polygon, normal zero.Vector2D) []ContactPoint {
   // Get candidate edges for the manifold
-  fmt.Println(normal)
   candidate_a := GetCandidateEdge(shapea, normal)
   candidate_b := GetCandidateEdge(shapeb, normal.Inverse())
-
-  fmt.Println(candidate_a)
-  fmt.Println(candidate_b)
 
   // Choose reference and incident edges
   reference := CandidateEdge{}
   incident := CandidateEdge{}
 
-  flip := false
   if math.Abs(candidate_a.Edge().Dot(normal)) <= math.Abs(candidate_b.Edge().Dot(normal)) {
     reference = candidate_a
     incident = candidate_b
   } else {
     reference = candidate_b
     incident = candidate_a
-    flip = true
   }
   ref_unit_vec := reference.Edge().Normalize()
-
-  fmt.Println(reference)
-  fmt.Println(incident)
 
   // Do the initial clip on one side of the clipping edge
   clipped_points := Clip(incident.PntA, incident.PntB, ref_unit_vec, ref_unit_vec.Dot(reference.PntA))
@@ -54,22 +44,14 @@ func GetContactManifold(shapea Polygon, shapeb Polygon, normal zero.Vector2D) []
     return []ContactPoint{}
   }
 
-  fmt.Println(clipped_points)
-
   // Do the seconday clip on the other side of the clipping edge
   clipped_points = Clip(clipped_points[0], clipped_points[1], ref_unit_vec.Inverse(), -ref_unit_vec.Dot(reference.PntB))
   if len(clipped_points) < 2 {
     return []ContactPoint{}
   }
 
-  fmt.Println(clipped_points)
-
-
   // Do final fixup
-  ref_norm := reference.Edge().Normalize().Cross(-1.0)
-  if flip {
-    ref_norm = ref_norm.Inverse()
-  }
+  ref_norm := ref_unit_vec.Cross(-1.0)
 
   max_penetration := ref_norm.Dot(reference.MaximumProjection)
   final := []ContactPoint{}
@@ -79,7 +61,7 @@ func GetContactManifold(shapea Polygon, shapeb Polygon, normal zero.Vector2D) []
     final = append(final, ContactPoint{clipped_points[0], p0_depth})
   }
   
-  p1_depth := ref_norm.Dot(clipped_points[0]) - max_penetration
+  p1_depth := ref_norm.Dot(clipped_points[1]) - max_penetration
   if p1_depth >= 0.0 {
     final = append(final, ContactPoint{clipped_points[1], p1_depth})
   }

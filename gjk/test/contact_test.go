@@ -111,7 +111,6 @@ func TestManifoldSinglePoint(t *testing.T) {
 }
 
 func TestManifoldAdjustDepth(t *testing.T) {
-  fmt.Println("START")
   quadA := gjk.Polygon{[]zero.Vector2D{zero.Vector2D{9, 4},
                                        zero.Vector2D{13, 3},
                                        zero.Vector2D{14, 7},
@@ -129,9 +128,12 @@ func TestManifoldAdjustDepth(t *testing.T) {
   assert.Equal(t, 2, len(points))
   assert.Equal(t, 12.0, points[0].Pnt.X)
   assert.Equal(t, 5.0, points[0].Pnt.Y)
-  assert.True(t, math.Abs(1.69 - points[0].Depth) < 1e-3)
-  assert.Equal(t, 8.0, points[1].Pnt.X)
+
+  fmt.Println(points[0].Depth)
+  assert.True(t, math.Abs(1.69 - points[0].Depth) < 1e-2)
+  assert.Equal(t, 9.25, points[1].Pnt.X)
   assert.Equal(t, 5.0, points[1].Pnt.Y)
-  assert.True(t, math.Abs(1.04 - points[1].Depth) < 1e-3)
-  fmt.Println("END")
+
+  fmt.Println(points[1].Depth)
+  assert.True(t, math.Abs(1.04 - points[1].Depth) < 1e-2)
 }
