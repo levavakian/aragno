@@ -74,3 +74,7 @@ func (tf Tf2D) Transform(vec Vector2D) Vector2D {
 func (v1 Vector2D) Dot(v2 Vector2D) float64 {
 	return v1.X*v2.X + v1.Y*v2.Y
 }
+
+func (v1 Vector2D) Cross(z float64) Vector2D {
+	return Vector2D{v1.Y * z, -v1.X * z}
+}
